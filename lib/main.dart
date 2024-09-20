@@ -48,9 +48,8 @@ class _TheAppState extends State<TheApp> {
       home: Scaffold(
         appBar: AppBar(
           flexibleSpace: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              gradient: const LinearGradient(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
                 colors: [Color(0xff636FA4), Color(0xff6b6b83), Color(0xff83a4d4)],
                 stops: [0, 0.5, 1],
                 begin: Alignment.centerLeft,
