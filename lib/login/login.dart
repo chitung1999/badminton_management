@@ -28,7 +28,7 @@ class _LoginState extends State<Login> {
       child: Container(
         width: 400,
         height: 500,
-        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 50),
+        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 30),
         color: Colors.white,
         child: Column(
           children: [
@@ -71,35 +71,39 @@ class _LoginState extends State<Login> {
             ),
             const SizedBox(height: 50),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TextBoxBtn(
-                  title: 'Cancel',
-                  width: 130,
-                  height: 40,
-                  textSize: 15,
-                  radius: 5,
-                  bgColor: Colors.white,
-                  textColor: Colors.blueGrey,
-                  onPressed: () {
-                    Navigator.pop(context, false);
-                  }
-                ),
-                TextBoxBtn(
-                    title: 'OK',
-                    width: 130,
+                Expanded(
+                  child: TextBoxBtn(
+                    title: 'Cancel',
+                    width: 180,
                     height: 40,
                     textSize: 15,
                     radius: 5,
+                    bgColor: Colors.white,
+                    textColor: Colors.blueGrey,
                     onPressed: () {
-                      if (_username.text.isEmpty || _password.text.isEmpty) {
-                        ConfigApp.showNotify(context, MessageType.error, StatusApp.blankAccount);
-                      } else if(_username.text == database.account.user && _password.text == database.account.pw) {
-                        Navigator.pop(context, true);
-                      } else {
-                        ConfigApp.showNotify(context, MessageType.error, StatusApp.incorrectAccount);
-                      }
+                      Navigator.pop(context, false);
                     }
+                  ),
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: TextBoxBtn(
+                      title: 'OK',
+                      width: 180,
+                      height: 40,
+                      textSize: 15,
+                      radius: 5,
+                      onPressed: () {
+                        if (_username.text.isEmpty || _password.text.isEmpty) {
+                          ConfigApp.showNotify(context, MessageType.error, StatusApp.blankAccount);
+                        } else if(_username.text == database.account.user && _password.text == database.account.pw) {
+                          Navigator.pop(context, true);
+                        } else {
+                          ConfigApp.showNotify(context, MessageType.error, StatusApp.incorrectAccount);
+                        }
+                      }
+                  ),
                 ),
               ],
             ),

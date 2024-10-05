@@ -43,7 +43,7 @@ class _ExpenseState extends State<Expense> {
     double height = MediaQuery.of(context).size.height;
     return Container(
       width: width,
-      height: height - 170,
+      height: height - 100,
       padding: EdgeInsets.symmetric(horizontal: width > 1280 ? (width - 1280) / 2 : 20),
       child: Column(
         children: [
