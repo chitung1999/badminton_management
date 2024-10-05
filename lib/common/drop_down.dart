@@ -1,10 +1,11 @@
-import 'package:badminton_management/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
 class DropDown extends StatefulWidget {
-  const DropDown({super.key, required this.onSelected});
+  const DropDown({super.key, required this.onSelected, required this.data, this.width = 150});
 
+  final List<String> data;
+  final double width;
   final Function(String) onSelected;
 
   @override
@@ -12,7 +13,15 @@ class DropDown extends StatefulWidget {
 }
 
 class _DropDownState extends State<DropDown> {
-  String _value = dataModel.time[0];
+  String _value = '';
+
+  @override
+  void initState() {
+    if(widget.data.isNotEmpty) {
+      _value = widget.data[0];
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +29,10 @@ class _DropDownState extends State<DropDown> {
       value: _value,
       isDense: true,
       buttonStyleData: ButtonStyleData(
-        height: 50,
-        width: 160,
-        padding: const EdgeInsets.only(left: 14, right: 14),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          border: Border.all(color: Colors.blueGrey),
-        ),
+        height: 35,
+        width: widget.width,
+        padding: const EdgeInsets.only(left: 15, right: 5),
+        decoration: BoxDecoration(color: Colors.white.withOpacity(0.5)),
       ),
       dropdownStyleData: DropdownStyleData(
         maxHeight: 300,
@@ -36,7 +42,7 @@ class _DropDownState extends State<DropDown> {
           thumbVisibility: MaterialStateProperty.all<bool>(true),
         ),
       ),
-      items: dataModel.time.map<DropdownMenuItem<String>>((String value) {
+      items: widget.data.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(value: value, child: Text(value));}
       ).toList(),
       onChanged: (String? value) {

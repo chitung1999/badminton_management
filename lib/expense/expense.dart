@@ -1,13 +1,13 @@
-import 'package:badminton_management/common/text_box_btn.dart';
-import 'package:badminton_management/database/database.dart';
+import '../common/text_box_btn.dart';
+import '../database/database.dart';
 import 'package:flutter/material.dart';
-import '../common/drop_down.dart';
 import '../common/config_app.dart';
 import 'dart:html' as html;
 
 class Expense extends StatefulWidget {
-  const Expense({super.key, required this.isAdmin});
+  const Expense({super.key, required this.isAdmin, required this.month});
 
+  final String month;
   final bool isAdmin;
 
   @override
@@ -17,6 +17,8 @@ class Expense extends StatefulWidget {
 class _ExpenseState extends State<Expense> {
   final List<String> _titles = ['Thời gian', 'Mặt hàng', 'Số tiền'];
   final TextEditingController _controller = TextEditingController();
+  late List<DataExpense> _data;
+  late int _sum;
   bool _isEdit = false;
 
   String _getString(DataExpense item, int num) {
@@ -28,9 +30,11 @@ class _ExpenseState extends State<Expense> {
     }
   }
 
-  void _reload(String str) {
-    dataModel.filterExpense(str);
-    setState(() {});
+  @override
+  void initState() {
+    _data = database.data[widget.month]!.expense;
+    _sum = database.data[widget.month]!.totalExpense;
+    super.initState();
   }
 
   @override
@@ -45,9 +49,8 @@ class _ExpenseState extends State<Expense> {
         children: [
           const SizedBox(height: 20),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              SizedBox(child: DropDown(onSelected: _reload)),
               if(widget.isAdmin) Row(
                 children: [
                   if(_isEdit) TextBoxBtn(
@@ -69,7 +72,7 @@ class _ExpenseState extends State<Expense> {
                     radius: 5,
                     onPressed: () async {
                       if(_isEdit) {
-                        StatusApp ret = await dataModel.saveExpense(_controller.text);
+                        StatusApp ret = await database.saveExpense(_controller.text);
                         if(ret == StatusApp.success) {
                           ConfigApp.showNotify(context, MessageType.success, StatusApp.success);
                           setState(() {_isEdit = false;});
@@ -80,7 +83,7 @@ class _ExpenseState extends State<Expense> {
                         }
                       }
                       else {
-                        _controller.text = dataModel.strExpense;
+                        _controller.text = database.strExpenseData;
                         setState(() {_isEdit = true;});
                       }
                     }
@@ -130,7 +133,8 @@ class _ExpenseState extends State<Expense> {
             ) :
             ListView(
               children: List.generate(
-                dataModel.expense.length, (index) => Container(
+
+                  _data.length, (index) => Container(
                 height: 40,
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.blueGrey.withOpacity(0.1))
@@ -140,7 +144,7 @@ class _ExpenseState extends State<Expense> {
                     for(int i = 0; i < _titles.length; i++)
                       Expanded(child: Center(
                         child: Text(
-                          _getString(dataModel.expense[index], i),
+                          _getString(_data[index], i),
                           style: TextStyle(
                             fontSize: 15,
                             color: Colors.blueGrey[800],
@@ -165,7 +169,7 @@ class _ExpenseState extends State<Expense> {
                   Expanded(
                     child: (i != _titles.length - 1) ? Container() : Center(
                       child: Text(
-                        'Tổng: ${dataModel.graph['Đã chi']}',
+                        'Tổng: $_sum',
                         style: TextStyle(
                           fontSize: 15,
                           color: Colors.blueGrey[800],

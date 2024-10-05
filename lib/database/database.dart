@@ -30,126 +30,77 @@ class DataExpense {
   }
 }
 
+class DataModel {
+  List<DataInvest> invest = [];
+  List<DataExpense> expense = [];
+  int totalInvest = 0;
+  int totalExpense = 0;
+
+  DataModel(List<DataInvest> i, List<DataExpense> e, int ti, int te) {
+    invest = i;
+    expense = e;
+    totalInvest = ti;
+    totalExpense = te;
+  }
+}
+
 class Account {
   String user = 'admin';
   String pw = '1';
 }
 
-final dataModel = DataModel();
+final database = DataBase();
 
-class DataModel {
-  // init singleton class
-  DataModel._internal();
-  factory DataModel() {
+class DataBase {
+  DataBase._internal();
+  factory DataBase() {
     return _instance;
   }
-  static final DataModel _instance = DataModel._internal();
+  static final DataBase _instance = DataBase._internal();
 
-  // declare data
   Account account = Account();
-  String strInvest = '';
-  String strExpense = '';
-  List<DataInvest> _investData = [];
-  List<DataExpense> _expenseData = [];
-
-  List<String> keyGraph = [];
-  Map<String, int> graph = {};
-  List<String> time = [];
-  List<DataInvest> invest = [];
-  List<DataExpense> expense = [];
-
-  void addValueGraph(String key, int value) {
-    graph[key] = graph[key]! + value;
-  }
-
-  void resetGraph() {
-    for (String key in keyGraph) {
-      graph[key] = 0;
-    }
-  }
-
-  void filterInvest(String str) {
-    invest.clear();
-
-    for (var item in _investData) {
-      if(str == time[0] || item.date.contains(str)) {
-        invest.add(item);
-      }
-    }
-  }
-
-  void filterExpense(String str) {
-    expense.clear();
-
-    for (var item in _expenseData) {
-      if(str == time[0] || item.date.contains(str)) {
-        expense.add(item);
-      }
-    }
-  }
-
-  void filterGraph(String str) {
-    resetGraph();
-
-    for (var item in _investData) {
-      if(str == time[0] || item.date.contains(str)) {
-        addValueGraph(keyGraph[0], item.price);
-        if (item.status) {
-          addValueGraph(keyGraph[1], item.price);
-        }
-      }
-    }
-
-    for (var item in _expenseData) {
-      if(str == time[0] || item.date.contains(str)) {
-      addValueGraph(keyGraph[2], item.price);
-      if(item.item == 'Sân') {
-        addValueGraph(keyGraph[4], item.price);
-      } else if(item.item == 'Cầu') {
-        addValueGraph(keyGraph[5], item.price);
-      } else if(item.item == 'Nước') {
-        addValueGraph(keyGraph[6], item.price);
-      } else {
-        addValueGraph(keyGraph[7], item.price);
-      }
-      }
-    }
-
-    graph[keyGraph[3]] = graph[keyGraph[0]]! - graph[keyGraph[2]]!;
-  }
+  String strInvestData = '';
+  String strExpenseData = '';
+  Map<String, DataModel> data = {};
 
   void initData() {
-    List<List<String>> list = string2List(strInvest);
+    Map<String, DataModel> tempData = {};
+    DataModel allData = DataModel([],[],0,0);
+    List<List<String>> list = string2List(strInvestData);
     for(var item in list) {
-      _investData.insert(0, DataInvest(item[0], item[1], (item[2] == '1'), int.tryParse(item[3])!));
-    }
-    list = string2List(strExpense);
-    for(var item in list) {
-      _expenseData.insert(0, DataExpense(item[0], item[1], int.tryParse(item[2])!));
-    }
+      allData.invest.insert(0, DataInvest(item[0], item[1], (item[2] == '1'), int.tryParse(item[3])!));
+      allData.totalInvest += int.tryParse(item[3])!;
 
-    time.add('Tất cả');
-    for (var item in _investData) {
-      String str = item.date.substring(3);
-      if(!time.contains(str)) {
-        time.add(str);
+      if(tempData.keys.contains(item[0].substring(3))) {
+        tempData[item[0].substring(3)]!.invest.insert(0, DataInvest(item[0], item[1], (item[2] == '1'), int.tryParse(item[3])!));
+        tempData[item[0].substring(3)]!.totalInvest += int.tryParse(item[3])!;
+      } else {
+        tempData[item[0].substring(3)] = DataModel([DataInvest(item[0], item[1], (item[2] == '1'), int.tryParse(item[3])!)], [], int.tryParse(item[3])!, 0);
       }
     }
-    for (var item in _expenseData) {
-      String str = item.date.substring(3);
-      if(!time.contains(str)) {
-        time.add(str);
+
+    list = string2List(strExpenseData);
+    for(var item in list) {
+      allData.expense.insert(0, DataExpense(item[0], item[1], int.tryParse(item[2])!));
+      allData.totalExpense += int.tryParse(item[2])!;
+
+      if(tempData.keys.contains(item[0].substring(3))) {
+        tempData[item[0].substring(3)]!.expense.insert(0, DataExpense(item[0], item[1], int.tryParse(item[2])!));
+        tempData[item[0].substring(3)]!.totalExpense += int.tryParse(item[2])!;
+      } else {
+        tempData[item[0].substring(3)] = DataModel([], [DataExpense(item[0], item[1], int.tryParse(item[2])!)], 0, int.tryParse(item[2])!);
       }
     }
-    time.sort((b, a) => a.split('').reversed.join('').compareTo(b.split('').reversed.join('')));
 
-    keyGraph = ['Dự kiến thu', 'Đã thu', 'Đã chi', 'Dự kiến còn lại', 'Sân', 'Cầu', 'Nước', 'Khác'];
-    filterGraph(time[0]);
-    filterInvest(time[0]);
-    filterExpense(time[0]);
+    List<String> keys = tempData.keys.toList();
+    keys.sort((a, b) => b.substring(0,2).compareTo(a.substring(0,2)));
+    keys.sort((a, b) => b.substring(3).compareTo(a.substring(3)));
+
+    data['Tất cả'] = allData;
+    for(String key in keys) {data[key] = tempData[key]!;}
   }
 
-  Future<bool> loadData() async {
+  Future<bool> initialize() async {
     try {
       client.setEndpoint('https://cloud.appwrite.io/v1').setProject('66e83387001de56d99c2').setSelfSigned(status: true);
 
@@ -176,7 +127,7 @@ class DataModel {
 
       for(int i = 0; i < response.documents.length; i++) {
         if (i == response.documents.length - 1) {
-          strInvest = response.documents[i].toMap()['data']['data'];
+          strInvestData = response.documents[i].toMap()['data']['data'];
         }
       }
 
@@ -187,7 +138,7 @@ class DataModel {
       );
       for(int i = 0; i < response.documents.length; i++) {
         if (i == response.documents.length - 1) {
-          strExpense = response.documents[i].toMap()['data']['data'];
+          strExpenseData = response.documents[i].toMap()['data']['data'];
         }
       }
     } catch (e) {
@@ -196,6 +147,60 @@ class DataModel {
     }
     initData();
     return true;
+  }
+
+  Map<String, int> getDataGeneral(String month) {
+    int invest = data[month]!.totalInvest;
+    int remain = 0;
+    int expense = data[month]!.totalExpense;
+    if(month == 'Tất cả') {
+      return {
+        'Thu': invest,
+        'Chi': expense,
+        'Còn lại': invest - expense,
+      };
+    } else {
+      List<String> keys = data.keys.toList().reversed.toList();
+      for(String key in keys) {
+        if(key == month) {
+          break;
+        }
+        remain = remain + data[key]!.totalInvest - data[key]!.totalExpense;
+      }
+      return {
+        'Thu': invest,
+        'Còn dư': remain,
+        'Chi': expense,
+        'Còn lại': invest + remain - expense,
+      };
+    }
+  }
+
+  Map<String, int> getDataDetail(String month) {
+    Map<String, int> resutl = {
+      'Sân': 0,
+      'Cầu': 0,
+      'Nước': 0,
+      'Khác': 0,
+    };
+
+    for(var item in data[month]!.expense) {
+      switch (item.item) {
+        case 'Sân':
+          resutl['Sân'] = resutl['Sân']! + item.price;
+          break;
+        case 'Cầu':
+          resutl['Cầu'] = resutl['Cầu']! + item.price;
+          break;
+        case 'Nước':
+          resutl['Nước'] = resutl['Nước']! + item.price;
+          break;
+        default:
+          resutl['Khác'] = resutl['Khác']! + item.price;
+          break;
+      }
+    }
+    return resutl;
   }
 
   Future<StatusApp> saveInvest(String str) async {
@@ -392,5 +397,22 @@ class DataModel {
       list.clear();
     }
     return list;
+  }
+
+  void getListMonth() {
+    // for(var value in _investData.keys) {
+    //   if(!listMonth.contains(value)) {
+    //     listMonth.add(value);
+    //   }
+    // }
+    // for(var value in _expenseData.keys) {
+    //   if(!listMonth.contains(value)) {
+    //     listMonth.add(value);
+    //   }
+    // }
+    //
+    // listMonth.sort((a, b) => b.substring(0,2).compareTo(a.substring(0,2)));
+    // listMonth.sort((a, b) => b.substring(3).compareTo(a.substring(3)));
+    // listMonth.insert(0, 'Tất cả');
   }
 }

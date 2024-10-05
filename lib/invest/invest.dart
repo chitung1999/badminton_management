@@ -1,13 +1,13 @@
-import 'package:badminton_management/common/text_box_btn.dart';
-import 'package:badminton_management/database/database.dart';
+import '../common/text_box_btn.dart';
+import '../database/database.dart';
 import 'package:flutter/material.dart';
-import '../common/drop_down.dart';
 import '../common/config_app.dart';
 import 'dart:html' as html;
 
 class Invest extends StatefulWidget {
-  const Invest({super.key, required this.isAdmin});
+  const Invest({super.key, required this.isAdmin, required this.month});
 
+  final String month;
   final bool isAdmin;
 
   @override
@@ -17,6 +17,8 @@ class Invest extends StatefulWidget {
 class _InvestState extends State<Invest> {
   final List<String> _titles = ['Thời gian', 'Tên', 'Trạng thái', 'Số tiền'];
   final TextEditingController _controller = TextEditingController();
+  late List<DataInvest> _data;
+  late int _sum;
   bool _isEdit = false;
 
   String _getString(DataInvest item, int num) {
@@ -29,9 +31,11 @@ class _InvestState extends State<Invest> {
     }
   }
 
-  void _reload(String str) {
-    dataModel.filterInvest(str);
-    setState(() {});
+  @override
+  void initState() {
+    _data = database.data[widget.month]!.invest;
+    _sum = database.data[widget.month]!.totalInvest;
+    super.initState();
   }
 
   @override
@@ -40,15 +44,14 @@ class _InvestState extends State<Invest> {
     double height = MediaQuery.of(context).size.height;
     return Container(
       width: width,
-      height: height - 170,
+      height: height - 100,
       padding: EdgeInsets.symmetric(horizontal: width > 1280 ? (width - 1280) / 2 : 20),
       child: Column(
         children: [
           const SizedBox(height: 20),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              SizedBox(child: DropDown(onSelected: _reload)),
               if(widget.isAdmin) Row(
                 children: [
                   if(_isEdit) TextBoxBtn(
@@ -70,7 +73,7 @@ class _InvestState extends State<Invest> {
                     radius: 5,
                     onPressed: () async {
                       if(_isEdit) {
-                        StatusApp ret = await dataModel.saveInvest(_controller.text);
+                        StatusApp ret = await database.saveInvest(_controller.text);
                         if(ret == StatusApp.success) {
                           ConfigApp.showNotify(context, MessageType.success, StatusApp.success);
                           setState(() {_isEdit = false;});
@@ -81,7 +84,7 @@ class _InvestState extends State<Invest> {
                         }
                       }
                       else {
-                        _controller.text = dataModel.strInvest;
+                        _controller.text = database.strInvestData;
                         setState(() {_isEdit = true;});
                       }
                     }
@@ -131,10 +134,10 @@ class _InvestState extends State<Invest> {
             ) :
             ListView(
               children: List.generate(
-                dataModel.invest.length, (index) => Container(
+                _data.length, (index) => Container(
                   height: 40,
                   decoration: BoxDecoration(
-                    color: dataModel.invest[index].status ? null : Colors.black12,
+                    color: _data[index].status ? null : Colors.black12,
                     border: Border.all(color: Colors.blueGrey.withOpacity(0.1))
                   ),
                   child: Row(
@@ -142,7 +145,7 @@ class _InvestState extends State<Invest> {
                     for(int i = 0; i < _titles.length; i++)
                       Expanded(child: Center(
                         child: Text(
-                          _getString(dataModel.invest[index], i),
+                          _getString(_data[index], i),
                           style: TextStyle(
                             fontSize: 15,
                             color: Colors.blueGrey[800],
@@ -168,7 +171,7 @@ class _InvestState extends State<Invest> {
                   Expanded(
                     child: (i != _titles.length - 1) ? Container() : Center(
                       child: Text(
-                        'Tổng: ${dataModel.graph['Dự kiến thu']}',
+                        'Tổng: $_sum',
                         style: TextStyle(
                           fontSize: 15,
                           color: Colors.blueGrey[800],

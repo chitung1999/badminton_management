@@ -1,4 +1,4 @@
-import 'package:badminton_management/database/database.dart';
+import '../database/database.dart';
 import 'package:flutter/material.dart';
 import '../common/text_box_btn.dart';
 import '../common/image_btn.dart';
@@ -94,7 +94,7 @@ class _LoginState extends State<Login> {
                     onPressed: () {
                       if (_username.text.isEmpty || _password.text.isEmpty) {
                         ConfigApp.showNotify(context, MessageType.error, StatusApp.blankAccount);
-                      } else if(_username.text == dataModel.account.user && _password.text == dataModel.account.pw) {
+                      } else if(_username.text == database.account.user && _password.text == database.account.pw) {
                         Navigator.pop(context, true);
                       } else {
                         ConfigApp.showNotify(context, MessageType.error, StatusApp.incorrectAccount);

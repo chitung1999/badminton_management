@@ -78,7 +78,7 @@ class _GraphState extends State<Graph> {
         barGroups: barGroups,
         gridData: const FlGridData(show: false),
         alignment: BarChartAlignment.spaceAround,
-        backgroundColor: Colors.blueGrey.withOpacity(0.5),
+        backgroundColor: const Color(0xFF311B92).withOpacity(0.1),
         maxY: max() * 1.2,
       ),
     );
@@ -109,8 +109,8 @@ class _GraphState extends State<Graph> {
           width: 40,
           borderRadius: const BorderRadius.all(Radius.circular(0)),
           gradient: const LinearGradient(
-            colors: [Color(0xff4B79A1), Color(0xff4CA1AF), Color(0xff83a4d4)],
-            stops: [0, 0.5, 1],
+            colors: [Color(0xff2193b0), Color(0xfff5af19)],
+            stops: [0, 1],
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
           ),
