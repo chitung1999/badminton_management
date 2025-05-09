@@ -1,18 +1,37 @@
-import 'package:badminton_management/database/database.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
 class DropDown extends StatefulWidget {
-  const DropDown({super.key, required this.onSelected});
+  const DropDown({
+    super.key,
+    required this.items,
+    required this.onChanged,
+    this.width = 160,
+    this.height = 40
+  });
 
-  final Function(String) onSelected;
+  final List<String> items;
+  final double width;
+  final double height;
+  final Function(String) onChanged;
 
   @override
   _DropDownState createState() => _DropDownState();
 }
 
 class _DropDownState extends State<DropDown> {
-  String _value = dataModel.time[0];
+  late String _value;
+
+  @override
+  void initState() {
+    if(widget.items.isEmpty) {
+      _value = '';
+    } else {
+      _value = widget.items[0];
+    }
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +39,12 @@ class _DropDownState extends State<DropDown> {
       value: _value,
       isDense: true,
       buttonStyleData: ButtonStyleData(
-        height: 50,
-        width: 160,
+        height: widget.height,
+        width: widget.width,
         padding: const EdgeInsets.only(left: 14, right: 14),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          border: Border.all(color: Colors.blueGrey),
+          border: Border.all(color: Colors.white),
+          color: Colors.white70
         ),
       ),
       dropdownStyleData: DropdownStyleData(
@@ -36,14 +55,12 @@ class _DropDownState extends State<DropDown> {
           thumbVisibility: MaterialStateProperty.all<bool>(true),
         ),
       ),
-      items: dataModel.time.map<DropdownMenuItem<String>>((String value) {
+      items: widget.items.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(value: value, child: Text(value));}
       ).toList(),
       onChanged: (String? value) {
-        setState(() {
-          _value = value!;
-          widget.onSelected(_value);
-        });
+        setState(() {_value = value!;});
+        widget.onChanged(_value);
       },
     );
   }

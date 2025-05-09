@@ -11,7 +11,6 @@ class Graph extends StatefulWidget {
 }
 
 class _GraphState extends State<Graph> {
-  List<String> _key = [];
 
   double max() {
     int max = 0;
@@ -21,12 +20,6 @@ class _GraphState extends State<Graph> {
       }
     });
     return max.toDouble();
-  }
-
-  @override
-  void initState() {
-    _key = widget.data.keys.toList();
-    super.initState();
   }
 
   @override
@@ -46,7 +39,7 @@ class _GraphState extends State<Graph> {
                 int rodIndex,
                 ) {
               return BarTooltipItem(
-                widget.data[_key[groupIndex]].toString(),
+                widget.data.values.elementAt(groupIndex).toString(),
                 const TextStyle(
                   color: Colors.deepPurple,
                   fontWeight: FontWeight.bold,
@@ -78,9 +71,10 @@ class _GraphState extends State<Graph> {
         barGroups: barGroups,
         gridData: const FlGridData(show: false),
         alignment: BarChartAlignment.spaceAround,
-        backgroundColor: Colors.blueGrey.withOpacity(0.5),
+        backgroundColor: Colors.black12,
         maxY: max() * 1.2,
       ),
+      duration: const Duration(seconds: 0),
     );
   }
 
@@ -90,7 +84,7 @@ class _GraphState extends State<Graph> {
       axisSide: meta.axisSide,
       space: 4,
       child: Text(
-          _key[index],
+          widget.data.keys.elementAt(index),
           style: const TextStyle(
             color: Colors.deepPurple,
             fontWeight: FontWeight.bold,
@@ -101,22 +95,22 @@ class _GraphState extends State<Graph> {
   }
 
   List<BarChartGroupData> get barGroups => List.generate(
-    widget.data.length, (index) => BarChartGroupData(
-      x: index,
-      barRods: [
-        BarChartRodData(
-          toY: widget.data[_key[index]]! < 0 ? 0 : widget.data[_key[index]]!.toDouble(),
-          width: 40,
-          borderRadius: const BorderRadius.all(Radius.circular(0)),
-          gradient: const LinearGradient(
-            colors: [Color(0xff4B79A1), Color(0xff4CA1AF), Color(0xff83a4d4)],
-            stops: [0, 0.5, 1],
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-          ),
-        )
-      ],
-      showingTooltipIndicators: [0],
-    )
+      widget.data.length, (index) => BarChartGroupData(
+    x: index,
+    barRods: [
+      BarChartRodData(
+        toY: widget.data.values.elementAt(index) < 0 ? 0 : widget.data.values.elementAt(index).toDouble(),
+        width: 40,
+        borderRadius: const BorderRadius.all(Radius.circular(0)),
+        gradient: LinearGradient(
+          colors: [Colors.indigo, Colors.indigo.shade400],
+          stops: const [0, 1],
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+        ),
+      )
+    ],
+    showingTooltipIndicators: [0],
+  )
   );
 }
