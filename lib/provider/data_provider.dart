@@ -86,7 +86,15 @@ class DataProvider with ChangeNotifier {
   Future<bool> addReceive(Receive r) async {
     bool ret = await server.addReceive(r);
     if (ret) {
-      _receives.add(r);
+      int index = 0;
+      for (var item in _receives) {
+        if(r.date.isAfter(item.date)) {
+          break;
+        }
+        index++;
+      }
+      _receives.insert(index, r);
+
       notifyListeners();
     }
 
@@ -123,11 +131,11 @@ class DataProvider with ChangeNotifier {
     List<Receive> data = [];
 
     if (time == null) {
-      data = _receives.reversed.toList();
+      data = _receives;
     } else {
-      for (int i = _receives.length - 1; i >= 0; i--) {
-        if (_receives[i].date.month == time.month && _receives[i].date.year == time.year) {
-          data.add(_receives[i]);
+      for (var item in _receives) {
+        if (item.date.month == time.month && item.date.year == time.year) {
+          data.add(item);
         }
       }
     }
@@ -138,7 +146,15 @@ class DataProvider with ChangeNotifier {
   Future<bool> addExpense(Expense e) async {
     bool ret = await server.addExpense(e);
     if (ret) {
-      _expense.add(e);
+      int index = 0;
+      for (var item in _expense) {
+        if(e.date.isAfter(item.date)) {
+          break;
+        }
+        index++;
+      }
+      _expense.insert(index, e);
+
       notifyListeners();
     }
 
@@ -149,11 +165,11 @@ class DataProvider with ChangeNotifier {
     List<Expense> data = [];
 
     if (time == null) {
-      data = _expense.reversed.toList();
+      data = _expense;
     } else {
-      for (int i = _expense.length - 1; i >= 0; i--) {
-        if (_expense[i].date.month == time.month && _expense[i].date.year == time.year) {
-          data.add(_expense[i]);
+      for (var item in _expense) {
+        if (item.date.month == time.month && item.date.year == time.year) {
+          data.add(item);
         }
       }
     }

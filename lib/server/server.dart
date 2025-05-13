@@ -35,7 +35,9 @@ class AppwriteService {
 
   Future<bool> getAllReceives(List<Receive> receives) async {
     try {
-      int limit = 25;
+      if(receives.isNotEmpty) receives.clear();
+
+      int limit = 500;
       int offset = 0;
 
       while (true) {
@@ -59,6 +61,8 @@ class AppwriteService {
         offset += limit;
       }
 
+      receives.sort((a, b) => b.date.compareTo(a.date));
+
       return true;
     } catch (e) {
       print(e);
@@ -68,7 +72,9 @@ class AppwriteService {
 
   Future<bool> getAllExpenses(List<Expense> expenses) async {
     try {
-      int limit = 25;
+      if(expenses.isNotEmpty) expenses.clear();
+
+      int limit = 500;
       int offset = 0;
 
       while (true) {
@@ -91,6 +97,8 @@ class AppwriteService {
 
         offset += limit;
       }
+
+      expenses.sort((a, b) => b.date.compareTo(a.date));
 
       return true;
     } catch (e) {

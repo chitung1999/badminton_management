@@ -1,10 +1,7 @@
-import 'package:badminton_management/provider/data_provider.dart';
-import 'package:badminton_management/provider/filter_provider.dart';
 import 'package:badminton_management/ui/header/header_opt_hor.dart';
 import 'package:badminton_management/ui/header/header_opt_ver.dart';
 import 'package:flutter/material.dart';
-import 'package:badminton_management/common/drop_down.dart';
-import 'package:provider/provider.dart';
+import 'drop_down.dart';
 import 'logo_app.dart';
 
 class HeaderApp extends StatelessWidget {
@@ -31,23 +28,15 @@ class HeaderApp extends StatelessWidget {
             const HeaderOptHor()
           else
             Row(
-                children: [
-                  const HeaderOptVer(),
-                  if (width > 600)...[
-                    const SizedBox(width: 40),
-                    const LogoApp(),
-                  ]
+              children: [
+                const HeaderOptVer(),
+                if (width > 600)...[
+                  const SizedBox(width: 40),
+                  const LogoApp(),
                 ]
+              ]
             ),
-          Consumer2<DataProvider, FilterProvider>(
-              builder: (context, data, date, chill) {
-                return DropDown(
-                  items: data.getListTime(),
-                  onChanged: (time) {date.setTime(time);},
-                );
-              }
-          )
-          //TextButtonApp(width: 100, height: 40, title: 'Trang chủ', onPressed: (){}, bgColor: Colors.green, outlineColor: Colors.blue,radius: 5,),
+          const DropDown(),
         ],
       ),
     );

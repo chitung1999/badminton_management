@@ -71,7 +71,7 @@ class _GraphState extends State<Graph> {
         barGroups: barGroups,
         gridData: const FlGridData(show: false),
         alignment: BarChartAlignment.spaceAround,
-        backgroundColor: Colors.black12,
+        backgroundColor: Colors.black12.withOpacity(0.04),
         maxY: max() * 1.2,
       ),
       duration: const Duration(seconds: 0),

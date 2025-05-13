@@ -25,23 +25,36 @@ class _HeaderOptHorState extends State<HeaderOptHor> {
             const LogoApp(),
             const SizedBox(width: 70),
             for (int i = 0; i < _option.length; i++)...[
-              TextButtonApp(
-                title: _option[i],
-                textColor: screen.getIndex() == i ? Colors.white : Colors.white70,
-                onPressed: (){ screen.setIndex(i);}
+              Column(
+                children: [
+                  Container(
+                    width: 130,
+                    height: 60,
+                    decoration: BoxDecoration( border: Border(bottom: BorderSide(width: 5, color: screen.getIndex() == i ? Colors.white : Colors.transparent))),
+                    child: TextButtonApp(
+                      title: _option[i],
+                      textColor: screen.getIndex() == i ? Colors.white : Colors.white70,
+                      onPressed: (){ screen.setIndex(i);}
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 30),
             ],
-            if(!ac.getAccount()) TextButtonApp(
-              title: 'Đăng nhập',
-              textColor: Colors.white70,
-              onPressed: (){
-                showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (BuildContext context) {return const Login();}
-                );
-              }
+            if(!ac.getAccount()) Container(
+              width: 130,
+              height: 60,
+              decoration: const BoxDecoration( border: Border(bottom: BorderSide(width: 5, color: Colors.transparent))),
+              child: TextButtonApp(
+                title: 'Đăng nhập',
+                textColor: Colors.white70,
+                onPressed: (){
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {return const Login();}
+                  );
+                }
+              ),
             ),
           ]
         );

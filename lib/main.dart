@@ -27,6 +27,9 @@ class TheApp extends StatelessWidget {
   const TheApp({super.key});
   @override
   Widget build(BuildContext context) {
+    final data = Provider.of<DataProvider>(context, listen: false);
+    Future<bool> initialize = data.initialize();
+
     return MaterialApp(
       title: 'Badminton Management',
       home: Scaffold(
@@ -34,16 +37,29 @@ class TheApp extends StatelessWidget {
           flexibleSpace: const HeaderApp(),
           toolbarHeight: 60
         ),
-        body: Consumer<ScreenProvider>(
-          builder: (context, screen, child) {
-            return IndexedStack(
-              index: screen.getIndex(),
-              children: const [
-                Home(),
-                ReceiveScreen(),
-                ExpenseScreen(),
-              ],
-            );
+        body: FutureBuilder<bool>(
+          future: initialize,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: SizedBox(
+                width: 70,
+                height: 70,
+                child: CircularProgressIndicator()
+              ));
+            } else {
+              return Consumer<ScreenProvider>(
+                builder: (context, screen, child) {
+                  return IndexedStack(
+                    index: screen.getIndex(),
+                    children: const [
+                      Home(),
+                      ReceiveScreen(),
+                      ExpenseScreen(),
+                    ],
+                  );
+                }
+              );
+            }
           }
         ),
       ),

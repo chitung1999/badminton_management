@@ -99,7 +99,7 @@ class _EditExpenseState extends State<EditExpense> {
                     controller: _item,
                     style: const TextStyle(fontSize: 20),
                     decoration: InputDecoration(
-                      hintText: 'Nhập tên',
+                      hintText: 'Nhập dịch vụ',
                       hintStyle: TextStyle(
                           fontSize: 20,
                           color: Colors.grey.withOpacity(0.3)
@@ -111,7 +111,7 @@ class _EditExpenseState extends State<EditExpense> {
                     controller: _price,
                     style: const TextStyle(fontSize: 20),
                     decoration: InputDecoration(
-                      hintText: 'Nhập số tiền',
+                      hintText: 'Nhập giá',
                       hintStyle: TextStyle(
                           fontSize: 20,
                           color: Colors.grey.withOpacity(0.3)
