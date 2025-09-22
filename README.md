@@ -2,7 +2,7 @@
 
 ## Build release
 ```bash
-flutter build --release
+flutter build web --release
 ```
 ## Deploy
 - Replace icon: build\web\favicon.png
